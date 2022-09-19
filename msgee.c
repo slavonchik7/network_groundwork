@@ -6,8 +6,10 @@
 void exit_with_error(void ehandler(void *), void *ehdata,
         const char *m, int err) {
 
-    if(m)
+    if(m) {
         fprintf(stderr, "msg: \"%s, errnum: %d\"\n", m, err);
+        fflush(stderr);
+    }
 
     if(ehandler)
         ehandler(ehdata);

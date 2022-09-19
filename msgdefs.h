@@ -9,7 +9,6 @@
 
 #define LOG_PRINT(file, ...)  \
     do { \
-            fflush(file); \
             fprintf(file, "(FILE: %s, LINE: %d, func: %s) msg: \"", __FILE__, __LINE__, __func__); \
             fprintf(file, __VA_ARGS__); \
             fprintf(file, "\"\n"); \
@@ -24,7 +23,6 @@
 
 #define LOG_PRINT_FRMT(file, frmt, ...)  \
     do { \
-            fflush(file); \
             fprintf(file, "(FILE: %s, LINE: %d, func: %s) msg: \""frmt"\"\n", \
                     __FILE__, __LINE__, __func__, \
                     __VA_ARGS__); \
