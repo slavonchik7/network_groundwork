@@ -12,6 +12,10 @@
  */
 int Mysql_query(MYSQL *mysql_sock, const char *q);
 
+
+
+unsigned int Mysql_query_store_res(MYSQL *mysql_sock, const char *q, MYSQL_RES **svres);
+
 /*
  * the function checks the value returned by mysql_error and
  * returns UNKNOW_ERROR_MSG if mysql_error returned an empty string
