@@ -69,7 +69,7 @@ typedef struct single_link_list {
             do { \
                 sl_node_t *pos = l->head; \
                 sl_node_t *next; \
-                while(pos) { \
+                while( pos ) { \
                     next = pos->next; \
                     func(pos->data); \
                     free(pos); \
@@ -78,9 +78,44 @@ typedef struct single_link_list {
             } while(0)
 
 
+#define list_sl_remove(l, psrch, pres) LIST_SL_REMOVE(l, psrch, pres)
+#define LIST_SL_REMOVE(l, psrch, pres) \
+            do { \
+                sl_node_t *prev = NULL; \
+                pres = (l->head); \
+                if ( pres) { \
+                    if ( pres == psrch ) \
+                        l->head = pres->next; \
+                    else { \
+                        for (; (pres != NULL) && (pres != psrch); prev = pres, pres = pres->next); \
+                        if ( pres ) prev->next = pres->next; \
+                    } \
+                    if ( pres ) \
+                        --l->cnt; \
+                } \
+            } while(0)
 
 
+                /* for (pres = (l->head); (pres != NULL) || (pres != psrch); pres = pres->next) */
 
+
+#define list_sl_func_remove(l, pdata, pres, func) LIST_SL_FUNC_REMOVE(l, pdata, pres, func)
+#define LIST_SL_FUNC_REMOVE(l, pdata, pres, func) \
+            do { \
+                sl_node_t *prev = NULL; \
+                pres = l->head; \
+                if ( l->head ) { \
+                    if ( func(pdata, pres->data) ) \
+                        l->head = pres->next; \
+                    else { \
+                        for (; (pres != NULL) && (!func(pdata, pres->data)); prev = pres, pres = pres->next); \
+                        if ( pres ) \
+                            prev->next = pres->next; \
+                    } \
+                    if ( pres ) \
+                        --l->cnt; \
+                } \
+            } while(0)
 
 
 #endif /* SNGLIST_H */

@@ -16,13 +16,9 @@
  * void *data of each of the nodes are passed
  * will return NULL if it could not be found or void data
  */
-#define list_find_func_data(l, dptr, func, pres) \
-            do { \
-                pres = NULL; \
-                for (sl_node_t *pos = (l->head); (pos != NULL); pos = pos->next) \
-                    if ( func(dptr, pos->data) ) \
-                        pres = pos->data; \
-            } while(0)
+#define list_find_func_data(l, pdata, func, pres) \
+            for (pres = l->head; (pres != NULL) && (!func(pdata, pres->data)); pres = pres->next)
+
 
 
 
