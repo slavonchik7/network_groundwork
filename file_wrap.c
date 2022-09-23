@@ -23,6 +23,19 @@ FILE *Fopen(const char *filename, const char *modes) {
 
 
 
+int Fclose(FILE *stream) {
+    assert(stream);
+
+    if ( fclose(stream) == EOF )
+        fprintf(stderr,
+                "cannot close file handler, error val %d, msg \"%s\"\n",
+                errno, strerror(errno));
+
+    return 0;
+}
+
+
+
 long int Ftell(FILE *stream) {
     int flen;
 
@@ -104,3 +117,45 @@ long int file_size(FILE *stream) {
 
     return flen;
 }
+
+
+size_t Fread(void *ptr, size_t nsize, size_t n, FILE *stream) {
+    /* how much have you actually read */
+    size_t nread;
+
+    /* how much should they have read */
+    size_t ntread = nsize * n;
+
+    assert(ptr && stream);
+
+    if ( (nread = fread(ptr, nsize, n, stream)) != ntread )
+        /* may have reached the end of the file */
+        if ( feof(stream) == 0)
+            /* an error was received */
+            check_fstream(stream, "fread() error");
+
+
+    return nread;
+}
+
+
+size_t Fwrite(const void *ptr, size_t nsize, size_t n, FILE *stream) {
+    /* how much have you actually write */
+    size_t nwrite;
+
+    /* how much should they have write */
+    size_t ntwrite = nsize * n;
+
+    assert(ptr && stream);
+
+    if ( (nwrite = fwrite(ptr, nsize, n, stream)) != ntwrite )
+        /* an error was received */
+        check_fstream(stream, "fwrite() error");
+
+    return nwrite;
+}
+
+
+
+
+
