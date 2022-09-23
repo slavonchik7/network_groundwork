@@ -23,7 +23,10 @@ unsigned int Mysql_query_store_res(MYSQL *mysql_sock, const char *q, MYSQL_RES *
 const char *Mysql_error(MYSQL *mysql_sock);
 
 
+MYSQL_ROW Mysql_fetch_row(MYSQL_RES *res);
 
+
+MYSQL_RES *Mysql_store_result(MYSQL *sql);
 
 #endif /* MYSQL_WRAP */
 
