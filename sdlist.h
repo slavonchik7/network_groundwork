@@ -17,7 +17,11 @@
  * will return NULL if it could not be found or void data
  */
 #define list_find_func_data(l, pdata, func, pres) \
-            for (pres = l->head; (pres != NULL) && (!func(pdata, pres->data)); pres = pres->next)
+            for ( pres = l->head; (pres != NULL); ) { \
+                if ( (func(pdata, pres->data)) ) \
+                    break; \
+                pres = pres->next; \
+            }
 
 
 
