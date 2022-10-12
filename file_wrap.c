@@ -9,7 +9,8 @@
 FILE *Fopen(const char *filename, const char *modes) {
     FILE *fp;
 
-    assert(filename && modes);
+    assert(filename);
+    assert(modes);
 
     if ( (fp = fopen(filename, modes)) == NULL ) {
         fprintf(stderr,
@@ -126,7 +127,8 @@ size_t Fread(void *ptr, size_t nsize, size_t n, FILE *stream) {
     /* how much should they have read */
     size_t ntread = nsize * n;
 
-    assert(ptr && stream);
+    assert(ptr);
+    assert(stream);
 
     if ( (nread = fread(ptr, nsize, n, stream)) != ntread )
         /* may have reached the end of the file */
@@ -146,7 +148,8 @@ size_t Fwrite(const void *ptr, size_t nsize, size_t n, FILE *stream) {
     /* how much should they have write */
     size_t ntwrite = nsize * n;
 
-    assert(ptr && stream);
+    assert(ptr);
+    assert(stream);
 
     if ( (nwrite = fwrite(ptr, nsize, n, stream)) != ntwrite )
         /* an error was received */
