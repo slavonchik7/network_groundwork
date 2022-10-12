@@ -5,6 +5,7 @@
 
 
 #include <malloc.h>
+#include <stdlib.h>
 #include "sdlist.h"
 
 
@@ -46,6 +47,8 @@ typedef struct single_link_list {
 #define LIST_SL_PUSH(l, dptr) \
             do { \
                 sl_node_t *m = (sl_node_t *)malloc(sizeof(sl_node_t)); \
+                if ( !m ) \
+                    break; \
                 m->data = dptr; \
                 m->next = NULL; \
                 if (l->head) { \
@@ -55,7 +58,7 @@ typedef struct single_link_list {
                     pos->next = m; \
                 } else \
                     l->head = m; \
-                ++l->cnt; \
+                ++(l->cnt); \
             } while(0)
 
 
@@ -75,23 +78,32 @@ typedef struct single_link_list {
                     free(pos); \
                     pos = next; \
                 } \
+                l->head = NULL; \
+                pos = NULL; \
             } while(0)
+
 
 
 #define list_sl_remove(l, psrch, pres) LIST_SL_REMOVE(l, psrch, pres)
 #define LIST_SL_REMOVE(l, psrch, pres) \
             do { \
                 sl_node_t *prev = NULL; \
-                pres = (l->head); \
-                if ( pres) { \
-                    if ( pres == psrch ) \
+                if ( (pres = l->head) ) { \
+                    if ( pres == psrch ) { \
                         l->head = pres->next; \
-                    else { \
-                        for (; (pres != NULL) && (pres != psrch); prev = pres, pres = pres->next); \
-                        if ( pres ) prev->next = pres->next; \
+                    } else { \
+                        pres = pres->next; \
+                        while ( pres ) { \
+                            if ( pres == psrch ) { \
+                                prev->next = pres->next; \
+                                break; \
+                            } \
+                            prev = pres; \
+                            pres = pres->next; \
+                        } \
                     } \
                     if ( pres ) \
-                        --l->cnt; \
+                        --(l->cnt); \
                 } \
             } while(0)
 
@@ -99,23 +111,49 @@ typedef struct single_link_list {
                 /* for (pres = (l->head); (pres != NULL) || (pres != psrch); pres = pres->next) */
 
 
+/*
+ * the definition finds a node of type sl_node_t * with a field value equal to pdata,
+ * which needs to be excluded, by calling func(), which should return 1,
+ * if the value of the data field of the current node should be excluded from the list,
+ * at the end press will point to the node of the list that was excluded, if such was found,
+ * otherwise on NULL
+ */
 #define list_sl_func_remove(l, pdata, pres, func) LIST_SL_FUNC_REMOVE(l, pdata, pres, func)
 #define LIST_SL_FUNC_REMOVE(l, pdata, pres, func) \
             do { \
                 sl_node_t *prev = NULL; \
-                pres = l->head; \
-                if ( l->head ) { \
-                    if ( func(pdata, pres->data) ) \
+                if ( (pres = l->head) ) { \
+                    if ( func(pdata, pres->data) ) { \
                         l->head = pres->next; \
-                    else { \
-                        for (; (pres != NULL) && (!func(pdata, pres->data)); prev = pres, pres = pres->next); \
-                        if ( pres ) \
-                            prev->next = pres->next; \
+                    } else { \
+                        pres = pres->next; \
+                        while (pres) { \
+                            if ( (func(pdata, pres->data)) ) {\
+                                prev->next = pres->next; \
+                                break; \
+                            } \
+                            prev = pres; \
+                            pres = pres->next; \
+                        } \
                     } \
                     if ( pres ) \
-                        --l->cnt; \
+                        --(l->cnt); \
                 } \
             } while(0)
+
+
+
+
+#define node_sl_func_free(pnode, func) NODE_SL_FUNC_FREE(pnode, func)
+#define NODE_SL_FUNC_FREE(pnode, func) \
+            do { \
+                func(pnode->data); \
+                pnode->data = NULL; \
+                free(pnode); \
+                pnode = NULL; \
+            } while (0)
+
+
 
 
 #endif /* SNGLIST_H */
