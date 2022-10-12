@@ -11,7 +11,8 @@
 int Mysql_query(MYSQL *mysql_sock, const char *q) {
     int qres;
 
-    assert(mysql_sock && q);
+    assert(mysql_sock);
+    assert(q);
 
     if ( (qres = mysql_query(mysql_sock, q)) != 0 ) {
         mysql_close(mysql_sock);
@@ -72,7 +73,6 @@ MYSQL_ROW Mysql_fetch_row(MYSQL_RES *res)  {
 
     return row;
 }
-ы
 
 MYSQL_RES *Mysql_store_result(MYSQL *sql) {
     MYSQL_RES *res;
